@@ -1,0 +1,21 @@
+spring:
+  devtools:
+    add-properties: false
+  application:
+    name: mullapp
+  datasource:
+    url: url
+    username: username
+    password: password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update # or create, create-drop, none, validate
+    show-sql: true # Optional: to show SQL queries in console
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+server:
+  error:
+    include-stacktrace: never
+    include-message: always
