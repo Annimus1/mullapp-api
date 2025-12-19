@@ -1,0 +1,89 @@
+package dev.pablo.mullapp.controllers;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import dev.pablo.mullapp.dto.EstateRequestDTO;
+import dev.pablo.mullapp.dto.EstateResponseDTO;
+import dev.pablo.mullapp.entities.Estate;
+import dev.pablo.mullapp.exceptions.ResourceConflictException;
+import dev.pablo.mullapp.services.EstateService;
+
+@RestController
+@RequestMapping("/api/estados")
+public class EstateController {
+
+    private final EstateService estateService;
+
+    public EstateController(EstateService estateService) {
+        this.estateService = estateService;
+    }
+    
+    @GetMapping("")
+    public ResponseEntity<Map<String,Object>> getAllEstates(){
+        Map<String,Object> response = new HashMap<>();
+
+        List<EstateResponseDTO> estates = estateService.getAllEstates();
+            
+        for (EstateResponseDTO e : estates) {
+            System.out.println(e.toString());
+        }
+            
+        response.put("estados", estates);        
+
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @GetMapping("/{name}")
+    public ResponseEntity<Map<String,Object>> getEstate(@PathVariable String name){
+        Map<String, Object> response = new HashMap<>();
+        HttpStatus httpStatus = HttpStatus.OK;
+
+        try{
+            response.put("data",name);
+        }
+        catch(Exception e){
+            httpStatus = HttpStatus.NOT_FOUND;
+            response.put("status", "Error: "+e.getMessage() );
+            response.put("status", httpStatus.value());
+            response.put("error", "Internal Server Error");
+            response.put("message", "Ha ocurrido un error inesperado.");
+            response.put("timestamp", java.time.LocalDateTime.now());
+        }
+
+
+        return new ResponseEntity<>(response, httpStatus);
+    }
+
+    @PostMapping("")
+    public ResponseEntity<Map<String, Object>> setEstates(@RequestBody EstateRequestDTO estateDto){
+        Map<String, Object> response = new HashMap<>();
+        HttpStatus httpStatus = HttpStatus.CREATED;
+
+        try{
+            Estate estate = estateService.createEstate(estateDto);
+            response.put("data",estate.toString());
+            response.put("message", "Estado Creado Correctamente");
+        }
+        catch (ResourceConflictException e){
+            httpStatus = HttpStatus.CONFLICT;
+            response.put("status", "Error: "+e.getMessage() );
+            response.put("status", httpStatus.value());
+            response.put("error", "Internal Server Error");
+            response.put("message", "The resource already exists.");
+            response.put("timestamp", java.time.LocalDateTime.now());
+        }
+        
+        return new ResponseEntity<>(response, httpStatus);
+    }
+}
