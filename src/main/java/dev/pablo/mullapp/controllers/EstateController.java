@@ -44,26 +44,6 @@ public class EstateController {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
-    @GetMapping("/{name}")
-    public ResponseEntity<Map<String,Object>> getEstate(@PathVariable String name){
-        Map<String, Object> response = new HashMap<>();
-        HttpStatus httpStatus = HttpStatus.OK;
-
-        try{
-            response.put("data",name);
-        }
-        catch(Exception e){
-            httpStatus = HttpStatus.NOT_FOUND;
-            response.put("status", "Error: "+e.getMessage() );
-            response.put("status", httpStatus.value());
-            response.put("error", "Internal Server Error");
-            response.put("message", "Ha ocurrido un error inesperado.");
-            response.put("timestamp", java.time.LocalDateTime.now());
-        }
-
-
-        return new ResponseEntity<>(response, httpStatus);
-    }
 
     @PostMapping("")
     public ResponseEntity<Map<String, Object>> setEstates(@RequestBody EstateRequestDTO estateDto){
