@@ -18,6 +18,7 @@ import dev.pablo.mullapp.dto.EstateRequestDTO;
 import dev.pablo.mullapp.dto.MuseumRequestDTO;
 import dev.pablo.mullapp.dto.MuseumResponseDTO;
 import dev.pablo.mullapp.entities.Estate;
+import dev.pablo.mullapp.exceptions.ResourceConflictException;
 import dev.pablo.mullapp.exceptions.ResourceNotFoundException;
 import dev.pablo.mullapp.services.EstateService;
 import dev.pablo.mullapp.services.MuseumService;
@@ -39,23 +40,10 @@ public class MuseumController {
         Map<String, Object> response = new HashMap<>();
         HttpStatus httpStatus = HttpStatus.OK;
 
-        try{
+        List<MuseumResponseDTO> museums = museumService.getMuseums();
 
-            List<MuseumResponseDTO> museums = museumService.getMuseums();
-
-
-            response.put("Museos",museums);
-        }
-        catch(Exception e){
-            httpStatus = HttpStatus.NOT_FOUND;
-            response.put("status", "Error: "+e.getMessage() );
-            response.put("status", httpStatus.value());
-            response.put("error", "Internal Server Error");
-            response.put("message", "Ha ocurrido un error inesperado.");
-            response.put("timestamp", java.time.LocalDateTime.now());
-        }
-
-
+        response.put("data",museums);
+        
         return new ResponseEntity<>(response, httpStatus);
     }
 
@@ -111,12 +99,18 @@ public class MuseumController {
             museum = museumService.creatMuseum(museumRequestDTO.getName(), estate);
             response.put("data",museum);
         }
-        catch(Exception e){
+        catch(ResourceConflictException e){
             httpStatus = HttpStatus.CONFLICT;
             response.put("status", "Error: "+e.getMessage() );
             response.put("status", httpStatus.value());
-            response.put("error", "Internal Server Error");
-            response.put("message", "El Recurso ya existe.");
+            response.put("message", "Un museo con ese nombre ya existe en la base de datos.");
+            response.put("timestamp", java.time.LocalDateTime.now());
+        }
+        catch (IllegalArgumentException e){
+            httpStatus = HttpStatus.BAD_REQUEST;
+            response.put("status", "Error: "+e.getMessage() );
+            response.put("status", httpStatus.value());
+            response.put("message", "No es un estado valido.");
             response.put("timestamp", java.time.LocalDateTime.now());
         }
 
