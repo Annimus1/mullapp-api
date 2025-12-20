@@ -5,6 +5,8 @@ import java.util.Set;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,8 +21,9 @@ public class Estate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(nullable = false, unique = true, length = 12)
-    private String name; // 12 characters max
+    @Column(nullable = false, unique = true, length = 16)
+    @Enumerated(EnumType.STRING)
+    private EstateNames name; // 12 characters max
 
     @OneToMany(mappedBy = "estate", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Municipality> municipalities;
@@ -46,11 +49,24 @@ public class Estate {
     }
 
     public String getName() {
-        return name;
+        return name.toString();
+    }
+
+    public void setName(EstateNames name) {
+        this.name = name;
     }
 
     public void setName(String name) {
-        this.name = name;
+        if (name == null) {
+            this.name = null;
+            return;
+        }
+        String normalized = name.trim().replace(' ', '_').toLowerCase();
+        try {
+            this.name = EstateNames.valueOf(normalized);
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException("Nombre de estado inválido: " + name);
+        }
     }
 
     public Set<Municipality> getMunicipalities() {

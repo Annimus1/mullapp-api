@@ -59,7 +59,15 @@ public class EstateController {
             response.put("status", "Error: "+e.getMessage() );
             response.put("status", httpStatus.value());
             response.put("error", "Internal Server Error");
-            response.put("message", "The resource already exists.");
+            response.put("message", "El recurso ya existe.");
+            response.put("timestamp", java.time.LocalDateTime.now());
+        }
+        catch (IllegalArgumentException e){
+            httpStatus = HttpStatus.BAD_REQUEST;
+            response.put("status", "Error: "+e.getMessage() );
+            response.put("status", httpStatus.value());
+            response.put("error", "Internal Server Error");
+            response.put("message", "No es un estado valido.");
             response.put("timestamp", java.time.LocalDateTime.now());
         }
         

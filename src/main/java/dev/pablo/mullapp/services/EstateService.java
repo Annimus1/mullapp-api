@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import dev.pablo.mullapp.dto.EstateRequestDTO;
 import dev.pablo.mullapp.dto.EstateResponseDTO;
 import dev.pablo.mullapp.entities.Estate;
+import dev.pablo.mullapp.entities.EstateNames;
 import dev.pablo.mullapp.exceptions.ResourceConflictException;
 import dev.pablo.mullapp.repositories.EstateRepository;
 
@@ -23,13 +24,15 @@ public class EstateService {
     public Estate createEstate(EstateRequestDTO estateRequestDTO) throws ResourceConflictException{
         Estate estate = new Estate();
 
-        Optional<Estate> existingEstate = estateRepository.findByName(estateRequestDTO.getName().toLowerCase());
+        EstateNames enumName = parseToEnum(estateRequestDTO.getName());
+
+        Optional<Estate> existingEstate = estateRepository.findByName(enumName);
 
         if (existingEstate.isPresent()) {
             throw new ResourceConflictException("El Estado con nombre '" + estateRequestDTO.getName() + "' ya existe.");
         }
 
-        estate.setName(estateRequestDTO.getName().toLowerCase());
+        estate.setName(enumName);
 
         return estateRepository.save(estate);
     }
@@ -46,7 +49,16 @@ public class EstateService {
     }
  
     public Optional<Estate> getEstate(String name){
-        Optional<Estate> estate = estateRepository.findByName(name.toLowerCase());
-        return estate;
+        return estateRepository.findByName(parseToEnum(name));
+    }
+
+    private EstateNames parseToEnum(String name) {
+        if (name == null) return null;
+        String normalized = name.trim().replace(' ', '_').toLowerCase();
+        try {
+            return EstateNames.valueOf(normalized);
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException("Nombre de estado inválido: " + name, ex);
+        }
     }
 }
