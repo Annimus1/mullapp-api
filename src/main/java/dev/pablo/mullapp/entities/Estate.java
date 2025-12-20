@@ -65,12 +65,7 @@ public class Estate {
         try {
             this.name = EstateNames.valueOf(normalized);
         } catch (IllegalArgumentException ex) {
-            System.out.println("-----------------------------------------------");
-            System.out.println("Nombre que recibio:" + name);
-            System.out.println("Nombre transformado:" + normalized);
-            System.out.println("Nombre correcto:" + EstateNames.merida);
-            System.out.println("-----------------------------------------------");
-            throw new IllegalArgumentException("Nombre de estado inválido: " + name, ex);
+            throw new IllegalArgumentException("Nombre de estado inválido: " + name);
         }
     }
 
