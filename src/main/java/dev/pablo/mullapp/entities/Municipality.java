@@ -33,6 +33,11 @@ public class Municipality {
 
     public Municipality(){}
 
+    public Municipality(String name, Estate estate){
+        this.name = name;
+        this.estate = estate;
+    }
+
     public Long getId() {
         return id;
     }
