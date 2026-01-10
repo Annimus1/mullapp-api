@@ -12,4 +12,8 @@ public class EstateRequestDTO {
     }
 
     public EstateRequestDTO(){}
+
+    public EstateRequestDTO(String name){
+        this.name = name;
+    }
 }

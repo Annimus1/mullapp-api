@@ -8,5 +8,5 @@ import dev.pablo.mullapp.entities.Estate;
 import dev.pablo.mullapp.entities.EstateNames;
 
 public interface EstateRepository extends JpaRepository<Estate, Long>{
-    Optional<Estate> findByName(EstateNames name);
+    public Optional<Estate> findByName(EstateNames name);
 }
