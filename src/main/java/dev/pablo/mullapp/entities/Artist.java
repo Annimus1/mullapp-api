@@ -25,6 +25,9 @@ public class Artist{
 
     @Column(nullable = false, length = 20)
     private String name;
+
+    @Column(nullable = false, unique = true)
+    private String DNI;
     
     @Column(nullable = true, length = 20)
     private String last;
@@ -128,11 +131,18 @@ public class Artist{
         this.genres = genres;
     }
 
-    @Override
-    public String toString() {
-        return "Artist [id=" + id + ", name=" + name + ", last=" + last + ", birthday=" + birthday + ", avatar="
-                + avatar  + ", estate=" + estate.getName() + ", municipality=" + municipality.getName() + "]";
+    public String getDNI() {
+        return DNI;
     }
 
+    public void setDNI(String dNI) {
+        DNI = dNI;
+    }
+
+    @Override
+    public String toString() {
+        return "Artist [id=" + id + ", name=" + name + ", DNI=" + DNI + ", last=" + last + ", birthday=" + birthday
+                + ", avatar=" + avatar + ", estate=" + estate.getName() + ", municipality=" + municipality.getName()+ "]";
+    }
     
 }
