@@ -51,6 +51,23 @@ public class MuseumService {
         
     }
 
+        public Museum creatMuseumOptional(String name, Estate estate) throws ResourceConflictException{
+        
+        Museum museum = new Museum();
+        museum.setName(name);
+        museum.setEstate(estate);
+
+        Optional<Museum> existingMuseum = museumRepository.findByName(name);
+
+        if(existingMuseum.isPresent()){
+            throw new ResourceConflictException("Resource already exists.");
+        }
+
+        Museum response = museumRepository.save(museum);
+        return response;
+        
+    }
+
     public MuseumResponseDTO findById(Long id) throws ResourceNotFoundException{
         MuseumResponseDTO museum = null;
         Optional<Museum> existingMuseum = museumRepository.findById(id);
@@ -63,5 +80,9 @@ public class MuseumService {
             throw new ResourceNotFoundException("Resource not found.");
         }
         return museum;
+    }
+
+    public Optional<Museum> getMuseum(String name){
+        return museumRepository.findByName(name);
     }
 }
